@@ -18,7 +18,9 @@
             var lat=28;
             var long=77;
             document.write("jquery loaded");
-            $.getJSON("http://api.openweathermap.org/data/2.5/weather?lat=${lat}.&lon=${long}.&appid=bb188523fc915f840312d6d636afc1b7",
+            var apiquery=parse("http://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&appid=bb188523fc915f840312d6d636afc1b7", lat, long);
+            document.write(apiquery);
+            $.getJSON(apiquery,
                 function (json) {
                     document.write(JSON.stringify(json));
                 });

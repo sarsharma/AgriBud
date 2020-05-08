@@ -35,10 +35,10 @@
                             Animi deleniti accusamus quibusdam et maxime voluptatem autem hic voluptas cupiditate iure,
                             numquam harum?
                         </p>
-                        <button id="getcoordinate" class="btn btn-primary" onclick="getLocation()">Try Now</button>
+                        <button id="getcoordinate" class="btn btn-primary" onclick="getLocation()">Get Coordinates</button>
                         <p id="demo"></p>
 
-                        <button onclick="gettingJSON()">Get JSON</button>
+                        <button onclick="gettingJSON()" class="btn btn-primary">Get JSON</button>
 
                     </div>
                 </div>
@@ -65,27 +65,24 @@
             long=position.coords.longitude;
             lat=position.coords.latitude;
         }
-        const parameterizedString = (...args) => {
-        const str = args[0];
-        const params = args.filter((arg, index) => index !== 0);
-        if (!str) return "";
-        return str.replace(/%s[0-9]+/g, matchedStr => {
-        const variableIndex = matchedStr.replace("%s", "") - 1;
-        return params[variableIndex];
-        });
-        }
-    </script>
-    <script>
-        function gettingJSON() {
-            document.write("jquery loaded");
-            
+        
+        function parse(str) {
+        var args = [].slice.call(arguments, 1),
+        i = 0;
 
-            var apiquery="http://api.openweathermap.org/data/2.5/weather?lat=%s1&lon=%s2&appid=bb188523fc915f840312d6d636afc1b7";
-            var apiquery2 =parameterizedString(apiquery, lat, lon);
-            $.getJSON("http://api.openweathermap.org/data/2.5/weather?lat=28&lon=77&appid=bb188523fc915f840312d6d636afc1b7",
-                function (json) {
-                    document.write(JSON.stringify(json));
-                });
+        return str.replace(/%s/g, () => args[i++]);
+        }
+
+        function gettingJSON() {
+        
+        
+        var apiquery=parse("http://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&appid=bb188523fc915f840312d6d636afc1b7",
+        lat, long);
+    
+        $.getJSON(apiquery,
+        function (json) {
+        document.getElementById("demo").innerHTML=(JSON.stringify(json));
+        });
         }
     </script>
 
