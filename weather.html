@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="https://code.jquery.com/jquery-3.5.0.min.js"
+    integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ=" crossorigin="anonymous"></script>
+
+<script>
+    $(function () {
+        $("#headerdiv").load("header.html");
+    });
+</script>
+
+<link rel="icon" type="image/png" sizes="32x32" href="images/AgriBud_logo.png" />   
+</head>
+
+<body>
+    <div id="headerdiv"></div>
+    <div id="particles-js"></div>
+    <div class="container" style=" margin-bottom: 120px;"></div>
+
+
+    <div class="container shadow rounded" id="overlay" style=" background-color: white; margin-bottom: 50px;">
+        <div class="card mb-3" style="max-width: 1200px;">
+            <div class="row no-gutters">
+                <div class="col-md-5">
+                    <img src="images/Features/nature-sky-sunny-clouds-125457.jpg" class="card-img" alt="...">
+                </div>
+                <div class="col-md-7">
+                    <div class="card-body">
+                        <h5 class="card-title">Weather Prediction</h5>
+                        <p class="card-text" style="margin-top: 30px;">Lorem ipsum dolor sit, amet consectetur
+                            adipisicing elit. Hic
+                            repellat iste ut quidem
+                            fuga officia placeat alias, reprehenderit sint voluptas dolore, ea blanditiis delectus odio
+                            corporis.
+                            Animi deleniti accusamus quibusdam et maxime voluptatem autem hic voluptas cupiditate iure,
+                            numquam harum?
+                        </p>
+                        <button id="getcoordinate" class="btn btn-primary" onclick="getLocation()">Try Now</button>
+                        <p id="demo"></p>
+
+                        <button onclick="gettingJSON()">Get JSON</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <script>
+        var x = document.getElementById("demo");
+        var long ,lat;
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                x.innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        function showPosition(position) {
+            x.innerHTML = "Latitude: " + position.coords.latitude +
+                "<br>Longitude: " + position.coords.longitude;
+            long=position.coords.longitude;
+            lat=position.coords.latitude;
+        }
+        const parameterizedString = (...args) => {
+        const str = args[0];
+        const params = args.filter((arg, index) => index !== 0);
+        if (!str) return "";
+        return str.replace(/%s[0-9]+/g, matchedStr => {
+        const variableIndex = matchedStr.replace("%s", "") - 1;
+        return params[variableIndex];
+        });
+        }
+    </script>
+    <script>
+        function gettingJSON() {
+            document.write("jquery loaded");
+            
+
+            var apiquery="http://api.openweathermap.org/data/2.5/weather?lat=%s1&lon=%s2&appid=bb188523fc915f840312d6d636afc1b7";
+            var apiquery2 =parameterizedString(apiquery, lat, lon);
+            $.getJSON("http://api.openweathermap.org/data/2.5/weather?lat=28&lon=77&appid=bb188523fc915f840312d6d636afc1b7",
+                function (json) {
+                    document.write(JSON.stringify(json));
+                });
+        }
+    </script>
+
+    <script src="particlejs/particles.js"></script>
+
+    <link rel="stylesheet" href="particlejs/style.css">
+    <script src="particlejs/app.js"></script>
+
+</body>
+</html>
