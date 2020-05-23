@@ -20,23 +20,23 @@
             <img src="images/AgriBud.png" alt="AgriBud" width="300" style="margin-top: 15px;">
         </div>
 
-        <form action="" method="post" style="margin-top: 15px; margin-bottom: 10px;" >
+        <form action="/signup" method="post" style="margin-top: 15px; margin-bottom: 10px;" name="signup" onsubmit="return validateform()" >
             <h2>Sign Up </h2>
             <p>Please fill these details to Sign Up </p>
             <div class="text-right" style="margin-right: 430px;">
             <div class="form-group">
                 <label>Username</label>
-                <input type="text" name="username">
+                <input type="text" name="username" required>
                 <span class="help-block"></span>
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" name="password">
+                <input type="password" name="password" required>
                 <span class="help-block"></span>
             </div>
             <div class="form-group">
                 <label>Confirm Password</label>
-                <input type="password" name="confirmpassword">
+                <input type="password" name="confirmpassword" required>
                 <span class="help-block"></span>
             </div>
 
@@ -57,6 +57,26 @@
 
     <link rel="stylesheet" href="particlejs/style.css">
     <script src="particlejs/app.js"></script>
+
+
+    <!-- script for signup validation -->
+    <script>
+        function validateform(){
+            var username=document.signup.username.value;
+            var password=document.signup.password.value;
+            var confirmpassword=document.signup.confirmpassword.value;
+            var email=document.signup.email.value;
+            if(password.length<6){
+                alert("Password needs to be atleast 6 characters long");
+                return false;
+            }
+            if(password!==confirmpassword){
+                alert("Password fields do not match");
+                return false;
+            }
+        }
+    </script>
+
 
 
 </body>
