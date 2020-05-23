@@ -6,12 +6,14 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const app = express();
 require("dotenv").config();
-app.use(bodyParser.urlencoded({
+app.use(bodyParser.urlencoded({ 
     extended: false
 }));
 app.use(bodyParser.json());
 
-app.listen(process.env.PORT || 3000);
+app.listen(process.env.PORT || 3000);//starting app
+
+app.use(express.static(__dirname));//setting static visibilty for whole directory
 
 //setting homepage
 
@@ -19,13 +21,13 @@ app.get("/", function (req, res) {
     res.type('html');
     res.sendFile(__dirname + "/index.html");
 });
-app.use(express.static(__dirname));
+
 
 //user signup middleware
 app.post("/signup", (req, res) => {
     var username = req.body.username;
     var password = req.body.password;
-    var confirmpassword = req.body.confirmpassword;
+    var hashedpassword =bcrypt.hashSync(password, 10); //hashing password using bcrypt using synchronous method
     var email = req.body.email;
     
     //checking if the username is already taken
@@ -38,7 +40,7 @@ app.post("/signup", (req, res) => {
         }
         else {
             var insertuser = "insert into users(username, email, password) values(? , ? , ? )";
-            db.query(insertuser, [username, email, password], (error) => {
+            db.query(insertuser, [username, email, hashedpassword], (error) => {
                 if (error) throw error;
                 else {
                     console.log("user inserted");
@@ -47,6 +49,7 @@ app.post("/signup", (req, res) => {
             })
         };
     });
-})
+});
+
 
 
