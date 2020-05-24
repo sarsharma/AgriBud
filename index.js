@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const app = express();
+const ejs=require('ejs');
 require("dotenv").config();
 app.use(bodyParser.urlencoded({ 
     extended: false
@@ -15,11 +16,13 @@ app.listen(process.env.PORT || 3000);//starting app
 
 app.use(express.static(__dirname));//setting static visibilty for whole directory
 
-//setting homepage
+app.set('view engine', 'ejs') //setting ejs rendering
 
-app.get("/", function (req, res) {
-    res.type('html');
+//setting homepage
+app.get(['/', '/index', '/index.html'], function (req, res) {
+    //res.type('html');
     res.sendFile(__dirname + "/index.html");
+    //console.log("triggered");
 });
 
 
@@ -50,6 +53,30 @@ app.post("/signup", (req, res) => {
         };
     });
 });
+
+app.post("/login", (req, res)=>{
+    var username=req.body.username;
+    var password=req.body.password;
+    var query="select password from users where username="+mysql.escape(username);
+    //if empty, then username doesnt exist
+    //if there is a non-empty result, then the result field holds the hashed password
+    db.query(query, (err, result)=>{
+        if(err) throw err;
+        if(!result.length){
+            res.send("Invalid username");
+        }
+        else{
+            if (bcrypt.compareSync(password, result[0].password)){
+                // Passwords match, set the session and login
+                res.send("Login Successful");
+
+            } else {
+                // Passwords don't match
+                res.send("Invalid Password");
+            }
+        }
+    })
+})
 
 
 
