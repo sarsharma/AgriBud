@@ -1,20 +1,40 @@
 const express = require('express');
-const db=require('./connect');
+const db = require('./connect');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const session = require("express-session");
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 const app = express();
-const ejs=require('ejs');
+const ejs = require('ejs');
 require("dotenv").config();
-app.use(bodyParser.urlencoded({ 
+app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(bodyParser.json());
 
-app.listen(process.env.PORT || 3000);//starting app
+app.listen(process.env.PORT || 3000); //starting app
 
-app.use(express.static(__dirname));//setting static visibilty for whole directory
+app.use(express.static(__dirname)); //setting static visibilty for whole directory
+
+app.use(
+    session({ //setting up express session
+        key: 'username',
+        secret: "this is secret string for setting session",
+        resave: true,
+        saveUninitialized: false,
+        cookie: {
+            expires: 600000
+        }
+    })
+);
+
+app.use((req, res, next) => { //checking if user's cookie are still saved in the browser
+  if (req.cookies.user_sid && !req.session.user) {
+    res.clearCookie("username");
+  }
+  next();
+});
 
 app.set('view engine', 'ejs') //setting ejs rendering
 
@@ -30,45 +50,46 @@ app.get(['/', '/index', '/index.html'], function (req, res) {
 app.post("/signup", (req, res) => {
     var username = req.body.username;
     var password = req.body.password;
-    var hashedpassword =bcrypt.hashSync(password, 10); //hashing password using bcrypt using synchronous method
+    var hashedpassword = bcrypt.hashSync(password, 10); //hashing password using bcrypt using synchronous method
     var email = req.body.email;
-    
+
     //checking if the username is already taken
-    var sql="Select * from users where username="+mysql.escape(username);
-    
-    db.query(sql, (err, result, field)=>{
+    var sql = "Select * from users where username=" + mysql.escape(username);
+
+    db.query(sql, (err, result, field) => {
         if (err) throw err;
-        if(result.length){
-             res.send("Username already exists");
-        }
-        else {
+        if (result.length) {
+            res.send("Username already exists");
+        } else {
             var insertuser = "insert into users(username, email, password) values(? , ? , ? )";
             db.query(insertuser, [username, email, hashedpassword], (error) => {
                 if (error) throw error;
                 else {
                     console.log("user inserted");
                     res.send("User created, login please");
+
                 }
             })
         };
     });
 });
 
-app.post("/login", (req, res)=>{
-    var username=req.body.username;
-    var password=req.body.password;
-    var query="select password from users where username="+mysql.escape(username);
+app.post("/login", (req, res) => {
+    var username = req.body.username;
+    var password = req.body.password;
+    var query = "select password from users where username=" + mysql.escape(username);
     //if empty, then username doesnt exist
     //if there is a non-empty result, then the result field holds the hashed password
-    db.query(query, (err, result)=>{
-        if(err) throw err;
-        if(!result.length){
+    db.query(query, (err, result) => {
+        if (err) throw err;
+        if (!result.length) {
             res.send("Invalid username");
-        }
-        else{
-            if (bcrypt.compareSync(password, result[0].password)){
+        } else {
+            if (bcrypt.compareSync(password, result[0].password)) {
                 // Passwords match, set the session and login
                 res.send("Login Successful");
+                req.session.save;
+                console.log(req.session);
 
             } else {
                 // Passwords don't match
@@ -78,5 +99,25 @@ app.post("/login", (req, res)=>{
     })
 })
 
+//rendering header according to user login status
+app.get("/header.html", (req, res) => {
+    res.render(__dirname + "/header.ejs");
+})
 
+//logout route
+app.get('/logout', (req, res) => {
+    if (req.session.username) {
+        console.log("logged out", req.session.cookie);
+        req.session.destroy((err) => {
+            if (err) throw err;
+        })
+        res.redirect('/');
+    } else {
+        res.sendFile(__dirname + "/login.html");
+    }
 
+})
+
+app.get('/checkusername', (req, res) => {
+    res.send(req.session.username);
+})
