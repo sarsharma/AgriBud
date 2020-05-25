@@ -36,8 +36,14 @@
                             numquam harum?
                         </p>
                         <button id="getcoordinate" class="btn btn-primary" onclick="getLocation()">Get Coordinates</button>
-                        <p id="demo"></p>
-
+                        <p id="demo">
+                            <p id="coordinates"></p>
+                            <p id="weatherType"></p>
+                            <p id="temperature"></p>
+                            <p id="pressure"></p>
+                            <p id="humidity"></p>
+                            <p id="name"></p>
+                        </p>
                         <button onclick="gettingJSON()" class="btn btn-primary">Get JSON</button>
 
                     </div>
@@ -81,7 +87,11 @@
     
         $.getJSON(apiquery,
         function (json) {
-        document.getElementById("demo").innerHTML=(JSON.stringify(json));
+        document.getElementById("weatherType").innerHTML=("Weather : "+json['weather'][0]['description']);
+        document.getElementById("temperature").innerHTML=("Humidity : "+json['main']['temp']+"K");
+        document.getElementById("pressure").innerHTML=("Humidity : "+json['main']['pressure']+"");
+        document.getElementById("humidity").innerHTML=("Humidity : "+json['main']['humidity']+"");
+        document.getElementById("name").innerHTML=("City : "+json.name);
         });
         }
     </script>
