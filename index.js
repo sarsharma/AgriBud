@@ -130,7 +130,7 @@ app.post('/fetchweather', (req, res,)=>{
     var lat=req.body.lat;
     var long=req.body.long;
     //console.log(lat,long);
-    var apiquery = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + long + "&appid="+process.env.WEATHER_API_KEY;
+    var apiquery = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + long + "&appid="+process.env.WEATHER_API_KEY+"&units=metric";
     http.get(apiquery, (resp) => {
         let data = '';
 

@@ -38,14 +38,19 @@
                         <button id="getweather" class="btn btn-primary" onclick="getWeather()">Get
                             Weather Data</button>
                         <p id="demo">
-                            <p id="coordinates"></p>
+                            <p id="placename"></p>
                             <p id="weatherType"></p>
                             <p id="temperature"></p>
+                            <p id="temperaturemax"></p>
+                            <p id="temperaturemin"></p>
                             <p id="pressure"></p>
                             <p id="humidity"></p>
-                            <p id="name"></p>
+                            <p id="cloudiness"></p>
+                            <p id="sunrise"></p>
+                            <p id="sunset"></p>
+                            
                         </p>
-        
+
 
                     </div>
                 </div>
@@ -82,18 +87,18 @@
                 },
                 type: "POST",
                 success: (weatherdata) => {
-                    document.getElementById("weatherType").innerHTML = ("Weather : " + weatherdata[
-                        'weather'][0]['description']);
-                    document.getElementById("temperature").innerHTML = ("Humidity : " + weatherdata['main'][
-                        'temp'
-                    ] + "K");
-                    document.getElementById("pressure").innerHTML = ("Humidity : " + weatherdata['main'][
-                        'pressure'
-                    ] + "");
-                    document.getElementById("humidity").innerHTML = ("Humidity : " + weatherdata['main'][
-                        'humidity'
-                    ] + "");
-                    document.getElementById("name").innerHTML = ("City : " + weatherdata.name);
+                    console.log(weatherdata);
+                    document.getElementById("placename").innerHTML = ("Location : " + weatherdata.name);
+                    document.getElementById("weatherType").innerHTML = ("Weather : " + weatherdata['weather'][0]['description']);
+                    document.getElementById("temperature").innerHTML = ("Current Temperature : " + weatherdata['main']['temp'] + " °C");
+                    document.getElementById("temperaturemax").innerHTML = ("Maximum Temperature : " + weatherdata['main']['temp_max'] + " °C");
+                    document.getElementById("temperaturemin").innerHTML = ("Minimum Temperature : " + weatherdata['main']['temp_min'] + " °C");
+                    document.getElementById("pressure").innerHTML = ("Pressure: " + weatherdata['main']['pressure'] + "hPa");
+                    document.getElementById("humidity").innerHTML = ("Humidity : " + weatherdata['main']['humidity'] + " %");
+                    document.getElementById("cloudiness").innerHTML = ("Cloudiness : " + weatherdata['clouds']['all'] + " %");
+                    document.getElementById("sunrise").innerHTML = ("Sunrise : " + (Date(weatherdata['sys']['sunrise'])).toLocaleTimeString("en-US"));
+                    document.getElementById("sunset").innerHTML = ("Sunset : " + Date(weatherdata['sys']['sunset']));
+                    
                 }
             })
         }
