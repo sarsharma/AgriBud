@@ -9,7 +9,7 @@
     });
 </script>
 
-<link rel="icon" type="image/png" sizes="32x32" href="images/AgriBud_logo.png" />   
+<link rel="icon" type="image/png" sizes="32x32" href="images/AgriBud_logo.png" />
 </head>
 
 <body>
@@ -35,7 +35,8 @@
                             Animi deleniti accusamus quibusdam et maxime voluptatem autem hic voluptas cupiditate iure,
                             numquam harum?
                         </p>
-                        <button id="getcoordinate" class="btn btn-primary" onclick="getLocation()">Get Coordinates</button>
+                        <button id="getweather" class="btn btn-primary" onclick="getWeather()">Get
+                            Weather Data</button>
                         <p id="demo">
                             <p id="coordinates"></p>
                             <p id="weatherType"></p>
@@ -44,55 +45,57 @@
                             <p id="humidity"></p>
                             <p id="name"></p>
                         </p>
-                        <button onclick="gettingJSON()" class="btn btn-primary">Get JSON</button>
+        
 
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
+
 
     <script>
         var x = document.getElementById("demo");
-        var long ,lat;
+        var long, lat;
 
-        function getLocation() {
+        function getWeather() {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition);
+                navigator.geolocation.getCurrentPosition(getcoordinate);
             } else {
                 x.innerHTML = "Geolocation is not supported by this browser.";
             }
         }
 
-        function showPosition(position) {
-            x.innerHTML = "Latitude: " + position.coords.latitude +
-                "<br>Longitude: " + position.coords.longitude;
-            long=position.coords.longitude;
-            lat=position.coords.latitude;
-        }
-        
-        function parse(str) {
-        var args = [].slice.call(arguments, 1),
-        i = 0;
-
-        return str.replace(/%s/g, () => args[i++]);
+        function getcoordinate(position) {
+            long = position.coords.longitude;
+            lat = position.coords.latitude;
+            gettingJSON();
         }
 
         function gettingJSON() {
-        
-        
-        var apiquery=parse("http://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&appid=bb188523fc915f840312d6d636afc1b7",
-        lat, long);
-    
-        $.getJSON(apiquery,
-        function (json) {
-        document.getElementById("weatherType").innerHTML=("Weather : "+json['weather'][0]['description']);
-        document.getElementById("temperature").innerHTML=("Humidity : "+json['main']['temp']+"K");
-        document.getElementById("pressure").innerHTML=("Humidity : "+json['main']['pressure']+"");
-        document.getElementById("humidity").innerHTML=("Humidity : "+json['main']['humidity']+"");
-        document.getElementById("name").innerHTML=("City : "+json.name);
-        });
+
+            $.ajax({
+                url: '/fetchweather',
+                data: {
+                    lat: lat,
+                    long: long,
+                },
+                type: "POST",
+                success: (weatherdata) => {
+                    document.getElementById("weatherType").innerHTML = ("Weather : " + weatherdata[
+                        'weather'][0]['description']);
+                    document.getElementById("temperature").innerHTML = ("Humidity : " + weatherdata['main'][
+                        'temp'
+                    ] + "K");
+                    document.getElementById("pressure").innerHTML = ("Humidity : " + weatherdata['main'][
+                        'pressure'
+                    ] + "");
+                    document.getElementById("humidity").innerHTML = ("Humidity : " + weatherdata['main'][
+                        'humidity'
+                    ] + "");
+                    document.getElementById("name").innerHTML = ("City : " + weatherdata.name);
+                }
+            })
         }
     </script>
 
@@ -103,4 +106,5 @@
 
 
 </body>
+
 </html>

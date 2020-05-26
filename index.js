@@ -1,5 +1,6 @@
 const express = require('express');
 const db = require('./connect');
+const http=require('http');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const session = require("express-session");
@@ -123,4 +124,26 @@ app.get('/logout', (req, res) => {
 
 app.get('/checkusername', (req, res) => {
     res.send(req.session.username);
+})
+
+app.post('/fetchweather', (req, res,)=>{
+    var lat=req.body.lat;
+    var long=req.body.long;
+    //console.log(lat,long);
+    var apiquery = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + long + "&appid="+process.env.WEATHER_API_KEY;
+    http.get(apiquery, (resp) => {
+        let data = '';
+
+        resp.on('data', (chunk) => {
+            data += chunk;
+        });
+
+        resp.on('end', () => {
+            //console.log(JSON.parse(data));
+            res.send(JSON.parse(data));
+        });
+
+    }).on("error", (err) => {
+        console.log("Error: " + err.message);
+    });
 })
