@@ -16,25 +16,26 @@ app.use(bodyParser.json());
 app.listen(process.env.PORT || 3000); //starting app
 
 app.use(express.static(__dirname)); //setting static visibilty for whole directory
+app.use(cookieParser()) //setting cookieparser
 
 app.use(
-    session({ //setting up express session
-        key: 'username',
-        secret: "this is secret string for setting session",
-        resave: true,
-        saveUninitialized: false,
-        cookie: {
-            expires: 600000
-        }
-    })
+  session({
+    //setting up express session
+    secret: "this is secret string for setting session",
+    resave: true,
+    saveUninitialized: false,
+    cookie: {
+      expires: 600000,
+    },
+  })
 );
 
-app.use((req, res, next) => { //checking if user's cookie are still saved in the browser
-  if (req.cookies.user_sid && !req.session.user) {
-    res.clearCookie("username");
-  }
-  next();
-});
+// app.use((req, res, next) => { //checking if user's cookie are still saved in the browser
+//   if (req.cookies.user_sid && !req.session.user) {
+//     res.clearCookie("user_sid");
+//   }
+//   next();
+// });
 
 app.set('view engine', 'ejs') //setting ejs rendering
 
@@ -87,9 +88,11 @@ app.post("/login", (req, res) => {
         } else {
             if (bcrypt.compareSync(password, result[0].password)) {
                 // Passwords match, set the session and login
-                res.send("Login Successful");
-                req.session.save;
+                req.session.username=username;
+                res.cookie('username', username);
                 console.log(req.session);
+               // console.log(req.cookie);
+                res.redirect("index.html");
 
             } else {
                 // Passwords don't match
