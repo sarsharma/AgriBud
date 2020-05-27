@@ -126,6 +126,7 @@ app.get('/checkusername', (req, res) => {
     res.send(req.session.username);
 })
 
+
 app.post('/fetchweather', (req, res,)=>{
     var lat=req.body.lat;
     var long=req.body.long;
