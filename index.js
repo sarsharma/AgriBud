@@ -22,11 +22,11 @@ app.use(cookieParser()) //setting cookieparser
 app.use(
   session({
     //setting up express session
-    secret: "this is secret string for setting session",
+    secret: process.env.COOKIE_SECRET,
     resave: true,
     saveUninitialized: false,
     cookie: {
-      expires: 600000,
+      expires: 6000000,
     },
   })
 );
@@ -91,7 +91,7 @@ app.post("/login", (req, res) => {
                 // Passwords match, set the session and login
                 req.session.username=username;
                 res.cookie('username', username);
-                console.log(req.session);
+                //console.log(req.session);
                // console.log(req.cookie);
                 res.redirect("index.html");
 
@@ -110,11 +110,12 @@ app.get("/header.html", (req, res) => {
 
 //logout route
 app.get('/logout', (req, res) => {
-    if (req.session.username) {
-        console.log("logged out", req.session.cookie);
+    if (req.session.username||req.cookies.username) {
+        //console.log("logged out", req.session.cookie);
         req.session.destroy((err) => {
             if (err) throw err;
         })
+        res.clearCookie("username");
         res.redirect('/');
     } else {
         res.sendFile(__dirname + "/login.html");
@@ -122,11 +123,13 @@ app.get('/logout', (req, res) => {
 
 })
 
+//get request to validate username for the current session
 app.get('/checkusername', (req, res) => {
-    res.send(req.session.username);
+    //res.send(req.session.username);
+    res.send(req.cookies.username);
 })
 
-
+//api for weather request
 app.post('/fetchweather', (req, res,)=>{
     var lat=req.body.lat;
     var long=req.body.long;
@@ -148,3 +151,4 @@ app.post('/fetchweather', (req, res,)=>{
         console.log("Error: " + err.message);
     });
 })
+
